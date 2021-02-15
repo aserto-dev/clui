@@ -40,6 +40,6 @@ func main() {
 
 	p := ui.Progress("Doing something in the background")
 	p.Start()
-	time.Sleep(5 * time.Second)
 	defer p.Stop()
+	time.Sleep(5 * time.Second)
 }

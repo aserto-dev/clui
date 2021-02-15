@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/kyokomi/emoji"
 )
 
@@ -53,7 +54,7 @@ func (u *Message) readBool(message string) bool {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Printf("%s ", emoji.Sprint(message))
+		fmt.Printf("[%s] %s ", color.MagentaString("bool"), emoji.Sprint(message))
 		scanner.Scan()
 		text := scanner.Text()
 
@@ -73,7 +74,7 @@ func (u *Message) readString(message string) string {
 		message = message + ":"
 	}
 
-	fmt.Printf("%s ", emoji.Sprint(message))
+	fmt.Printf("[%s] %s ", color.GreenString("text"), emoji.Sprint(message))
 
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
@@ -91,7 +92,7 @@ func (u *Message) readInt(message string) int64 {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Printf("%s ", emoji.Sprint(message))
+		fmt.Printf("[%s] %s ", color.CyanString("integer"), emoji.Sprint(message))
 		scanner.Scan()
 		text := scanner.Text()
 
