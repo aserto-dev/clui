@@ -11,7 +11,7 @@ You can find a more comprehensive example [here](https://github.com/aserto-dev/c
     - [Tables](#tables)
 
 
-[![asciicast](https://asciinema.org/a/x3zDkAkqmeLiwuUzNeo1Sfr9L.svg)](https://asciinema.org/a/x3zDkAkqmeLiwuUzNeo1Sfr9L)
+![demo](./demo.gif)
 
 ## Usage
 
