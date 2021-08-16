@@ -75,7 +75,7 @@ func (u *Message) Msg(message string) {
 
 	// Print a newline before starting output, if not compact.
 	if message != "" && !u.compact {
-		fmt.Println()
+		u.ui.println()
 	}
 
 	if !u.noNewline {
@@ -100,12 +100,12 @@ func (u *Message) Msg(message string) {
 		message = color.RedString(message)
 	}
 
-	fmt.Printf("%s", message)
+	u.ui.printf("%s", message)
 
 	for _, interaction := range u.interactions {
 		switch interaction.variant {
 		case ask:
-			fmt.Printf("> ")
+			u.ui.printf("> ")
 			switch interaction.valueType {
 			case tBool:
 				*(interaction.value.(*bool)) = u.readBool(interaction.name)
@@ -117,17 +117,19 @@ func (u *Message) Msg(message string) {
 		case show:
 			switch interaction.valueType {
 			case tBool:
-				fmt.Printf("%s: %s\n", emoji.Sprint(interaction.name), color.MagentaString("%t", interaction.value))
+				u.ui.printf("%s: %s\n", emoji.Sprint(interaction.name), color.MagentaString("%t", interaction.value))
 			case tInt:
-				fmt.Printf("%s: %s\n", emoji.Sprint(interaction.name), color.CyanString("%d", interaction.value))
+				u.ui.printf("%s: %s\n", emoji.Sprint(interaction.name), color.CyanString("%d", interaction.value))
 			case tString:
-				fmt.Printf("%s: %s\n", emoji.Sprint(interaction.name), color.GreenString("%s", interaction.value))
+				u.ui.printf("%s: %s\n", emoji.Sprint(interaction.name), color.GreenString("%s", interaction.value))
+			case tErr:
+				u.ui.printf("%s\n", color.RedString("%+v", interaction.value))
 			}
 		}
 	}
 
 	for idx, headers := range u.tableHeaders {
-		table := tablewriter.NewWriter(os.Stdout)
+		table := tablewriter.NewWriter(u.ui.output)
 		table.SetHeader(headers)
 		table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
 		table.SetCenterSeparator("|")
@@ -180,6 +182,16 @@ func (u *Message) WithStringValue(name string, value string) *Message {
 		variant:   show,
 		valueType: tString,
 		value:     value,
+	})
+	return u
+}
+
+// WithErr adds an error value to be printed in the message
+func (u *Message) WithErr(err error) *Message {
+	u.interactions = append(u.interactions, interaction{
+		variant:   show,
+		valueType: tErr,
+		value:     err,
 	})
 	return u
 }

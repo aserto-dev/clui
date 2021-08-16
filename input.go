@@ -2,8 +2,6 @@ package clui
 
 import (
 	"bufio"
-	"fmt"
-	"os"
 	"strconv"
 	"strings"
 
@@ -52,9 +50,9 @@ func (u *Message) readBool(message string) bool {
 	var err error
 	var result bool
 
-	scanner := bufio.NewScanner(os.Stdin)
+	scanner := bufio.NewScanner(u.ui.input)
 	for {
-		fmt.Printf("[%s] %s ", color.MagentaString("bool"), emoji.Sprint(message))
+		u.ui.printf("[%s] %s ", color.MagentaString("bool"), emoji.Sprint(message))
 		scanner.Scan()
 		text := scanner.Text()
 
@@ -74,9 +72,9 @@ func (u *Message) readString(message string) string {
 		message = message + ":"
 	}
 
-	fmt.Printf("[%s] %s ", color.GreenString("text"), emoji.Sprint(message))
+	u.ui.printf("[%s] %s ", color.GreenString("text"), emoji.Sprint(message))
 
-	scanner := bufio.NewScanner(os.Stdin)
+	scanner := bufio.NewScanner(u.ui.input)
 	scanner.Scan()
 	value := scanner.Text()
 	return value
@@ -90,9 +88,9 @@ func (u *Message) readInt(message string) int64 {
 	var err error
 	var result int64
 
-	scanner := bufio.NewScanner(os.Stdin)
+	scanner := bufio.NewScanner(u.ui.input)
 	for {
-		fmt.Printf("[%s] %s ", color.CyanString("integer"), emoji.Sprint(message))
+		u.ui.printf("[%s] %s ", color.CyanString("integer"), emoji.Sprint(message))
 		scanner.Scan()
 		text := scanner.Text()
 
