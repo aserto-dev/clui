@@ -1,5 +1,8 @@
 # clui
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/aserto-dev/clui.svg)](https://pkg.go.dev/github.com/aserto-dev/clui)
+[![Go Report Card](https://goreportcard.com/badge/github.com/aserto-dev/clui)](https://goreportcard.com/report/github.com/aserto-dev/clui)
+
 Command Line User Interface library for building user interfaces that interact with humans.
 You can find a more comprehensive example [here](https://github.com/aserto-dev/clui/tree/main/example).
 
