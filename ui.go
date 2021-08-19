@@ -45,6 +45,7 @@ type Message struct {
 	end          int
 	compact      bool
 	noNewline    bool
+	stacks       bool
 	interactions []interaction
 	tableHeaders [][]string
 	tableData    [][][]string

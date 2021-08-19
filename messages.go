@@ -123,7 +123,11 @@ func (u *Message) Msg(message string) {
 			case tString:
 				u.ui.printf("%s: %s\n", emoji.Sprint(interaction.name), color.GreenString("%s", interaction.value))
 			case tErr:
-				u.ui.printf("%s\n", color.RedString("%+v", interaction.value))
+				if u.stacks {
+					u.ui.printf("%s\n", color.RedString("%+v", interaction.value))
+				} else {
+					u.ui.printf("%s\n", color.RedString("%v", interaction.value))
+				}
 			}
 		}
 	}
@@ -161,6 +165,12 @@ func (u *Message) Compact() *Message {
 // WithEnd ends the entire process after printing the message.
 func (u *Message) WithEnd(code int) *Message {
 	u.end = code
+	return u
+}
+
+// WithStack causes error stacks to be printed.
+func (u *Message) WithStacks() *Message {
+	u.stacks = true
 	return u
 }
 
