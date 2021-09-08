@@ -76,6 +76,16 @@ func NewUIWithOutputAndInput(output io.Writer, input io.Reader) *UI {
 	}
 }
 
+// Input returns the io.Reader used to read user input
+func (u *UI) Input() io.Reader {
+	return u.input
+}
+
+// Output returns the io.Write used to print
+func (u *UI) Output() io.Writer {
+	return u.output
+}
+
 func (u *UI) printf(format string, args ...interface{}) {
 	u.output.Write([]byte(fmt.Sprintf(format, args...)))
 }
