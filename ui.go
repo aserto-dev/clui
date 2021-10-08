@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
+
+	"github.com/fatih/color"
 )
 
 type msgType int
@@ -60,7 +63,11 @@ type interaction struct {
 
 // NewUI creates a new UI
 func NewUI() *UI {
-	return NewUIWithOutput(os.Stdout)
+	if runtime.GOOS == "windows" {
+		return NewUIWithOutput(color.Output)
+	} else {
+		return NewUIWithOutput(os.Stdout)
+	}
 }
 
 // NewUI creates a new UI with a specific output
