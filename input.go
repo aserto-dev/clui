@@ -11,11 +11,20 @@ import (
 
 // WithAskBool waits for the user's input for a boolean value
 func (u *Message) WithAskBool(name string, result *bool) *Message {
+	return u.WithAskBoolMap(name, result, map[string]bool{
+		"true":  true,
+		"false": false,
+	})
+}
+
+// WithAskBool waits for the user's input for a boolean value
+func (u *Message) WithAskBoolMap(name string, result *bool, answerMap map[string]bool) *Message {
 	u.interactions = append(u.interactions, interaction{
 		name:      name,
 		variant:   ask,
 		valueType: tBool,
 		value:     result,
+		boolMap:   answerMap,
 	})
 	return u
 }
@@ -42,13 +51,17 @@ func (u *Message) WithAskInt(name string, result *int64) *Message {
 	return u
 }
 
-func (u *Message) readBool(message string) bool {
+func (u *Message) readBool(message string, boolMap map[string]bool) bool {
 	if !strings.HasSuffix(message, "?") && !strings.HasSuffix(message, ":") {
 		message = message + ":"
 	}
 
-	var err error
-	var result bool
+	if len(boolMap) == 0 {
+		boolMap = map[string]bool{
+			"true":  true,
+			"false": false,
+		}
+	}
 
 	scanner := bufio.NewScanner(u.ui.input)
 	for {
@@ -56,14 +69,14 @@ func (u *Message) readBool(message string) bool {
 		scanner.Scan()
 		text := scanner.Text()
 
-		result, err = strconv.ParseBool(text)
+		value, ok := boolMap[strings.ToLower(text)]
 
-		if err != nil {
-			u.ui.Problem().WithStringValue("  input", text).Msg("Value is not a bool.")
+		if !ok {
+			u.ui.Problem().WithStringValue("  input", text).Msg("Invalid value.")
 			continue
 		}
 
-		return result
+		return value
 	}
 }
 

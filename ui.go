@@ -59,6 +59,7 @@ type interaction struct {
 	valueType valueType
 	name      string
 	value     interface{}
+	boolMap   map[string]bool
 }
 
 // NewUI creates a new UI

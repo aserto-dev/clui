@@ -108,7 +108,7 @@ func (u *Message) Msg(message string) {
 			u.ui.printf("> ")
 			switch interaction.valueType {
 			case tBool:
-				*(interaction.value.(*bool)) = u.readBool(interaction.name)
+				*(interaction.value.(*bool)) = u.readBool(interaction.name, interaction.boolMap)
 			case tInt:
 				*(interaction.value.(*int64)) = u.readInt(interaction.name)
 			case tString:
