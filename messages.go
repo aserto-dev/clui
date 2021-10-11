@@ -85,18 +85,13 @@ func (u *Message) Msg(message string) {
 	switch u.msgType {
 	case normal:
 	case exclamation:
-		message = emoji.Sprintf(":warning: %s", message)
 		message = color.YellowString(message)
 	case note:
-		message = emoji.Sprintf(":ship:%s", message)
 		message = color.BlueString(message)
 	case success:
-		message = emoji.Sprintf(":heavy_check_mark: %s", message)
 		message = color.GreenString(message)
 	case progress:
-		message = emoji.Sprintf(":three-thirty: %s", message)
 	case problem:
-		message = emoji.Sprintf(":cross_mark: %s", message)
 		message = color.RedString(message)
 	}
 
@@ -136,6 +131,7 @@ func (u *Message) Msg(message string) {
 		table := tablewriter.NewWriter(u.ui.output)
 		table.SetHeader(headers)
 		table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+		table.SetAlignment(tablewriter.ALIGN_LEFT)
 		table.SetCenterSeparator("|")
 
 		if idx < len(u.tableData) {
