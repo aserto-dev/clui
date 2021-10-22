@@ -131,9 +131,13 @@ func (u *Message) Msg(message string) {
 	for idx, headers := range u.tableHeaders {
 		table := tablewriter.NewWriter(u.ui.output)
 		table.SetHeader(headers)
-		table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+		table.SetBorders(tablewriter.Border{Left: false, Top: false, Right: false, Bottom: false})
+		table.SetBorder(false)
 		table.SetAlignment(tablewriter.ALIGN_LEFT)
-		table.SetCenterSeparator("|")
+		table.SetCenterSeparator("")
+		table.SetHeaderLine(false)
+		table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+		table.SetColumnSeparator("")
 
 		if idx < len(u.tableData) {
 			table.AppendBulk(u.tableData[idx])
