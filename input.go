@@ -2,11 +2,14 @@ package clui
 
 import (
 	"bufio"
+	"io/ioutil"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/fatih/color"
 	"github.com/kyokomi/emoji"
+	"golang.org/x/term"
 )
 
 // WithAskBool waits for the user's input for a boolean value
@@ -51,6 +54,18 @@ func (u *Message) WithAskInt(name string, result *int64) *Message {
 	return u
 }
 
+// WithAskPassword waits for the user's input for a password value
+func (u *Message) WithAskPassword(name string, stdin bool, result *string) *Message {
+	u.interactions = append(u.interactions, interaction{
+		name:      name,
+		variant:   ask,
+		valueType: tPassword,
+		value:     result,
+		stdin:     stdin,
+	})
+	return u
+}
+
 func (u *Message) readBool(message string, boolMap map[string]bool) bool {
 	if !strings.HasSuffix(message, "?") && !strings.HasSuffix(message, ":") {
 		message = message + ":"
@@ -65,7 +80,7 @@ func (u *Message) readBool(message string, boolMap map[string]bool) bool {
 
 	scanner := bufio.NewScanner(u.ui.input)
 	for {
-		u.ui.printf("[%s] %s ", color.MagentaString("bool"), emoji.Sprint(message))
+		u.ui.printf("> [%s] %s ", color.MagentaString("bool"), emoji.Sprint(message))
 		scanner.Scan()
 		text := scanner.Text()
 
@@ -85,7 +100,7 @@ func (u *Message) readString(message string) string {
 		message = message + ":"
 	}
 
-	u.ui.printf("[%s] %s ", color.GreenString("text"), emoji.Sprint(message))
+	u.ui.printf("> [%s] %s ", color.GreenString("text"), emoji.Sprint(message))
 
 	scanner := bufio.NewScanner(u.ui.input)
 	scanner.Scan()
@@ -103,7 +118,7 @@ func (u *Message) readInt(message string) int64 {
 
 	scanner := bufio.NewScanner(u.ui.input)
 	for {
-		u.ui.printf("[%s] %s ", color.CyanString("integer"), emoji.Sprint(message))
+		u.ui.printf("> [%s] %s ", color.CyanString("integer"), emoji.Sprint(message))
 		scanner.Scan()
 		text := scanner.Text()
 
@@ -116,4 +131,43 @@ func (u *Message) readInt(message string) int64 {
 
 		return result
 	}
+}
+
+func (u *Message) readPassword(message string, stdin bool) string {
+	if !strings.HasSuffix(message, "?") && !strings.HasSuffix(message, ":") {
+		message = message + ":"
+	}
+
+	var value string
+
+	if stdin {
+		contents, err := ioutil.ReadAll(u.ui.input)
+		if err != nil {
+			u.ui.Problem().WithStringValue("  input", err.Error()).Msg("failed to read password from stdin")
+			return ""
+		}
+
+		value = strings.TrimSuffix(string(contents), "\n")
+		value = strings.TrimSuffix(string(value), "\r")
+	}
+
+	if value == "" {
+		u.ui.printf("> [%s] %s ", color.GreenString("password"), emoji.Sprint(message))
+		byteValue, err := term.ReadPassword(int(syscall.Stdin))
+		if err != nil {
+			u.ui.Problem().WithStringValue("  input", err.Error()).Msg("failed to read password")
+			return ""
+		}
+
+		// assume that go knows how to handle newline on nix platforms: https://golang.org/src/fmt/print.go
+		_, err = u.ui.output.Write([]byte{'\n'})
+		if err != nil {
+			u.ui.Problem().WithStringValue("  input", err.Error()).Msg("failed to write to output")
+			return ""
+		}
+
+		value = string(byteValue)
+	}
+
+	return value
 }

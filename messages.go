@@ -100,7 +100,6 @@ func (u *Message) Msg(message string) {
 	for _, interaction := range u.interactions {
 		switch interaction.variant {
 		case ask:
-			u.ui.printf("> ")
 			switch interaction.valueType {
 			case tBool:
 				*(interaction.value.(*bool)) = u.readBool(interaction.name, interaction.boolMap)
@@ -108,6 +107,8 @@ func (u *Message) Msg(message string) {
 				*(interaction.value.(*int64)) = u.readInt(interaction.name)
 			case tString:
 				*(interaction.value.(*string)) = u.readString(interaction.name)
+			case tPassword:
+				*(interaction.value.(*string)) = u.readPassword(interaction.name, interaction.stdin)
 			}
 		case show:
 			switch interaction.valueType {
