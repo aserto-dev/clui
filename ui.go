@@ -27,6 +27,7 @@ const (
 	tString
 	tInt
 	tErr
+	tPassword
 )
 
 const (
@@ -60,6 +61,7 @@ type interaction struct {
 	name      string
 	value     interface{}
 	boolMap   map[string]bool
+	stdin     bool
 }
 
 // NewUI creates a new UI
