@@ -2,6 +2,7 @@ package clui
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/fatih/color"
@@ -75,27 +76,34 @@ func (u *Message) Msg(message string) {
 
 	// Print a newline before starting output, if not compact.
 	if message != "" && !u.compact {
-		u.ui.println()
+		fmt.Fprintln(u.ui.Output())
 	}
 
 	if !u.noNewline {
 		message += "\n"
 	}
 
+	var output io.Writer
 	switch u.msgType {
 	case normal:
+		output = u.ui.Output()
 	case exclamation:
+		output = u.ui.Output()
 		message = color.YellowString(message)
 	case note:
+		output = u.ui.Output()
 		message = color.BlueString(message)
 	case success:
+		output = u.ui.Output()
 		message = color.GreenString(message)
 	case progress:
+		output = u.ui.Output()
 	case problem:
+		output = u.ui.Err()
 		message = color.RedString(message)
 	}
 
-	u.ui.printf("%s", message)
+	fmt.Fprintf(output, "%s", message)
 
 	for _, interaction := range u.interactions {
 		switch interaction.variant {
@@ -113,16 +121,16 @@ func (u *Message) Msg(message string) {
 		case show:
 			switch interaction.valueType {
 			case tBool:
-				u.ui.printf("%s: %s\n", emoji.Sprint(interaction.name), color.MagentaString("%t", interaction.value))
+				fmt.Fprintf(output, "%s: %s\n", emoji.Sprint(interaction.name), color.MagentaString("%t", interaction.value))
 			case tInt:
-				u.ui.printf("%s: %s\n", emoji.Sprint(interaction.name), color.CyanString("%d", interaction.value))
+				fmt.Fprintf(output, "%s: %s\n", emoji.Sprint(interaction.name), color.CyanString("%d", interaction.value))
 			case tString:
-				u.ui.printf("%s: %s\n", emoji.Sprint(interaction.name), color.GreenString("%s", interaction.value))
+				fmt.Fprintf(output, "%s: %s\n", emoji.Sprint(interaction.name), color.GreenString("%s", interaction.value))
 			case tErr:
 				if u.stacks {
-					u.ui.printf("%s\n", color.RedString("%+v", interaction.value))
+					fmt.Fprintf(output, "%s\n", color.RedString("%+v", interaction.value))
 				} else {
-					u.ui.printf("%s\n", color.RedString("%v", interaction.value))
+					fmt.Fprintf(output, "%s\n", color.RedString("%v", interaction.value))
 				}
 			}
 		}

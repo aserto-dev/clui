@@ -2,6 +2,7 @@ package clui
 
 import (
 	"bufio"
+	"fmt"
 	"io/ioutil"
 	"strconv"
 	"strings"
@@ -80,7 +81,7 @@ func (u *Message) readBool(message string, boolMap map[string]bool) bool {
 
 	scanner := bufio.NewScanner(u.ui.input)
 	for {
-		u.ui.printf("> [%s] %s ", color.MagentaString("bool"), emoji.Sprint(message))
+		fmt.Fprintf(u.ui.Output(), "> [%s] %s ", color.MagentaString("bool"), emoji.Sprint(message))
 		scanner.Scan()
 		text := scanner.Text()
 
@@ -100,7 +101,7 @@ func (u *Message) readString(message string) string {
 		message = message + ":"
 	}
 
-	u.ui.printf("> [%s] %s ", color.GreenString("text"), emoji.Sprint(message))
+	fmt.Fprintf(u.ui.Output(), "> [%s] %s ", color.GreenString("text"), emoji.Sprint(message))
 
 	scanner := bufio.NewScanner(u.ui.input)
 	scanner.Scan()
@@ -118,7 +119,7 @@ func (u *Message) readInt(message string) int64 {
 
 	scanner := bufio.NewScanner(u.ui.input)
 	for {
-		u.ui.printf("> [%s] %s ", color.CyanString("integer"), emoji.Sprint(message))
+		fmt.Fprintf(u.ui.Output(), "> [%s] %s ", color.CyanString("integer"), emoji.Sprint(message))
 		scanner.Scan()
 		text := scanner.Text()
 
@@ -152,7 +153,7 @@ func (u *Message) readPassword(message string, stdin bool) string {
 	}
 
 	if value == "" {
-		u.ui.printf("> [%s] %s ", color.GreenString("password"), emoji.Sprint(message))
+		fmt.Fprintf(u.ui.Output(), "> [%s] %s ", color.GreenString("password"), emoji.Sprint(message))
 		byteValue, err := term.ReadPassword(int(syscall.Stdin))
 		if err != nil {
 			u.ui.Problem().WithStringValue("  input", err.Error()).Msg("failed to read password")
