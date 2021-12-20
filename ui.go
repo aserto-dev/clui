@@ -1,7 +1,6 @@
 package clui
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"runtime"
@@ -39,6 +38,7 @@ const (
 // on the CLI
 type UI struct {
 	output io.Writer
+	err    io.Writer
 	input  io.Reader
 }
 
@@ -78,10 +78,15 @@ func NewUIWithOutput(output io.Writer) *UI {
 	return NewUIWithOutputAndInput(output, os.Stdin)
 }
 
-// NewUI creates a new UI with a specific input and output
 func NewUIWithOutputAndInput(output io.Writer, input io.Reader) *UI {
+	return NewUIWithOutputErrorAndInput(output, os.Stderr, input)
+}
+
+// NewUI creates a new UI with a specific input, error output and output
+func NewUIWithOutputErrorAndInput(output, err io.Writer, input io.Reader) *UI {
 	return &UI{
 		output: output,
+		err:    err,
 		input:  input,
 	}
 }
@@ -96,10 +101,6 @@ func (u *UI) Output() io.Writer {
 	return u.output
 }
 
-func (u *UI) printf(format string, args ...interface{}) {
-	u.output.Write([]byte(fmt.Sprintf(format, args...)))
-}
-
-func (u *UI) println(args ...interface{}) {
-	u.output.Write([]byte(fmt.Sprintln(args...)))
+func (u *UI) Err() io.Writer {
+	return u.err
 }
