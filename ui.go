@@ -79,6 +79,9 @@ func NewUIWithOutput(output io.Writer) *UI {
 }
 
 func NewUIWithOutputAndInput(output io.Writer, input io.Reader) *UI {
+	if runtime.GOOS == "windows" {
+		return NewUIWithOutputErrorAndInput(output, color.Error, input)
+	}
 	return NewUIWithOutputErrorAndInput(output, os.Stderr, input)
 }
 
