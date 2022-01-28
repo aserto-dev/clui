@@ -45,12 +45,13 @@ func (u *Message) WithAskString(name string, result *string) *Message {
 }
 
 // WithAskInt waits for the user's input for an int value
-func (u *Message) WithAskInt(name string, result *int64) *Message {
+func (u *Message) WithAskInt(name string, result *int64, allowedValues ...int) *Message {
 	u.interactions = append(u.interactions, interaction{
-		name:      name,
-		variant:   ask,
-		valueType: tInt,
-		value:     result,
+		name:             name,
+		variant:          ask,
+		valueType:        tInt,
+		value:            result,
+		allowedIntValues: allowedValues,
 	})
 	return u
 }
@@ -81,7 +82,12 @@ func (u *Message) readBool(message string, boolMap map[string]bool) bool {
 
 	scanner := bufio.NewScanner(u.ui.input)
 	for {
-		fmt.Fprintf(u.ui.Output(), "> [%s] %s ", color.MagentaString("bool"), emoji.Sprint(message))
+		if u.compact {
+			fmt.Fprintf(u.ui.Output(), "> %s ", emoji.Sprint(message))
+		} else {
+			fmt.Fprintf(u.ui.Output(), "> [%s] %s ", color.MagentaString("bool"), emoji.Sprint(message))
+		}
+
 		scanner.Scan()
 		text := scanner.Text()
 
@@ -101,7 +107,11 @@ func (u *Message) readString(message string) string {
 		message = message + ":"
 	}
 
-	fmt.Fprintf(u.ui.Output(), "> [%s] %s ", color.GreenString("text"), emoji.Sprint(message))
+	if u.compact {
+		fmt.Fprintf(u.ui.Output(), "> %s ", emoji.Sprint(message))
+	} else {
+		fmt.Fprintf(u.ui.Output(), "> [%s] %s ", color.GreenString("text"), emoji.Sprint(message))
+	}
 
 	scanner := bufio.NewScanner(u.ui.input)
 	scanner.Scan()
@@ -109,7 +119,7 @@ func (u *Message) readString(message string) string {
 	return value
 }
 
-func (u *Message) readInt(message string) int64 {
+func (u *Message) readInt(message string, allowedValues ...int) int64 {
 	if !strings.HasSuffix(message, "?") && !strings.HasSuffix(message, ":") {
 		message = message + ":"
 	}
@@ -119,7 +129,11 @@ func (u *Message) readInt(message string) int64 {
 
 	scanner := bufio.NewScanner(u.ui.input)
 	for {
-		fmt.Fprintf(u.ui.Output(), "> [%s] %s ", color.CyanString("integer"), emoji.Sprint(message))
+		if u.compact {
+			fmt.Fprintf(u.ui.Output(), "> %s ", emoji.Sprint(message))
+		} else {
+			fmt.Fprintf(u.ui.Output(), "> [%s] %s ", color.CyanString("integer"), emoji.Sprint(message))
+		}
 		scanner.Scan()
 		text := scanner.Text()
 
@@ -128,6 +142,21 @@ func (u *Message) readInt(message string) int64 {
 		if err != nil {
 			u.ui.Problem().WithStringValue("  input", text).Msg("Value is not an integer.")
 			continue
+		}
+
+		if len(allowedValues) > 0 {
+			found := false
+			for _, value := range allowedValues {
+				if int64(value) == result {
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				u.ui.Problem().WithStringValue("  input", text).Msg("Value is not an allowed option.")
+				continue
+			}
 		}
 
 		return result

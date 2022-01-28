@@ -56,12 +56,13 @@ type Message struct {
 }
 
 type interaction struct {
-	variant   valueVariant
-	valueType valueType
-	name      string
-	value     interface{}
-	boolMap   map[string]bool
-	stdin     bool
+	variant          valueVariant
+	valueType        valueType
+	name             string
+	value            interface{}
+	boolMap          map[string]bool
+	stdin            bool
+	allowedIntValues []int
 }
 
 // NewUI creates a new UI

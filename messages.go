@@ -112,7 +112,7 @@ func (u *Message) Msg(message string) {
 			case tBool:
 				*(interaction.value.(*bool)) = u.readBool(interaction.name, interaction.boolMap)
 			case tInt:
-				*(interaction.value.(*int64)) = u.readInt(interaction.name)
+				*(interaction.value.(*int64)) = u.readInt(interaction.name, interaction.allowedIntValues...)
 			case tString:
 				*(interaction.value.(*string)) = u.readString(interaction.name)
 			case tPassword:
