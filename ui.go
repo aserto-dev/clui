@@ -51,8 +51,13 @@ type Message struct {
 	noNewline    bool
 	stacks       bool
 	interactions []interaction
-	tableHeaders [][]string
-	tableData    [][][]string
+	table        table
+}
+
+type table struct {
+	headers    [][]string
+	data       [][][]string
+	noAutoWrap bool
 }
 
 type interaction struct {

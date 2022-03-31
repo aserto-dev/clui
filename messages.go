@@ -136,7 +136,7 @@ func (u *Message) Msg(message string) {
 		}
 	}
 
-	for idx, headers := range u.tableHeaders {
+	for idx, headers := range u.table.headers {
 		table := tablewriter.NewWriter(u.ui.output)
 		table.SetHeader(headers)
 		table.SetBorders(tablewriter.Border{Left: false, Top: false, Right: false, Bottom: false})
@@ -146,9 +146,10 @@ func (u *Message) Msg(message string) {
 		table.SetHeaderLine(false)
 		table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
 		table.SetColumnSeparator("")
+		table.SetAutoWrapText(!u.table.noAutoWrap)
 
-		if idx < len(u.tableData) {
-			table.AppendBulk(u.tableData[idx])
+		if idx < len(u.table.data) {
+			table.AppendBulk(u.table.data[idx])
 		}
 
 		table.Render()
