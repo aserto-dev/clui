@@ -6,5 +6,5 @@ require (
 	github.com/fatih/color v1.13.0
 	github.com/kyokomi/emoji v2.2.4+incompatible
 	github.com/olekukonko/tablewriter v0.0.5
-	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
+	golang.org/x/term v0.6.0
 )
