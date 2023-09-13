@@ -3,7 +3,7 @@ package clui
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"strconv"
 	"strings"
 	"syscall"
@@ -171,7 +171,7 @@ func (u *Message) readPassword(message string, stdin bool) string {
 	var value string
 
 	if stdin {
-		contents, err := ioutil.ReadAll(u.ui.input)
+		contents, err := io.ReadAll(u.ui.input)
 		if err != nil {
 			u.ui.Problem().WithStringValue("  input", err.Error()).Msg("failed to read password from stdin")
 			return ""
